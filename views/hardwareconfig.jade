@@ -1,0 +1,262 @@
+extends navbar
+
+block bodycontent
+
+  body
+
+    - var deviceCounter = 0
+    
+   
+    div(id="configurationwarning")
+      if (usbDeviceMismatchInformation.length)
+        div(class="alert alert-danger text-center")
+          h4 Warning         
+          each mismatch in usbDeviceMismatchInformation
+            each mismatchItem in mismatch['DeviceMismatch']
+              - var errorText = mismatchItem['$']['text']
+              p #{errorText}    
+
+    div(id="hardwareconfig")
+      form(id="hardwareConfigForm" name='hardwareConfigFrom' method="post")
+        input(type="hidden" id="ethernetCardsConfigured" name="ethernetCardsConfigured" value="false")
+        h2(class='text-center') Hardware Configuration
+
+        h3 Ethernet adapters
+        div(id='ethernetCards')
+          table(class='table table-hover table-bordered')
+            thead
+              tr(class='vsk-blue text-white')
+                th Product
+                th Vendor
+                th Mac
+                th Interface
+
+              each deviceType in networkDeviceInformation
+                if (deviceType['$']['Type'] === 'net')
+                  each device in deviceType['Device']
+                    tr
+                      td!= device['$']['ID_MODEL_FROM_DATABASE']
+                      td!= device['$']['ID_VENDOR_FROM_DATABASE']
+                      td!= device['$']['ID_NET_NAME_MAC']
+                      td
+                        - var InterfaceName = device['$']['INTERFACE']
+                        input(type="hidden" name=deviceCounter value='Type="Net"')
+                        input(type="hidden" name=deviceCounter value='Kernels="' + device['$']['KERNELS'] + '"')
+                        input(type="hidden" name=deviceCounter value='Mac="' + device['$']['ID_NET_NAME_MAC'] + '"')
+                        select(autocomplete="off" id=deviceCounter name=deviceCounter class="EthetnetAdapter" onChange="EthernetAdapterChanged(this.id, this.value);")
+                          if (InterfaceName === "---")
+                            option(selected='selected') ---
+                          else
+                            option ---
+
+                          each val in [0, 1, 2]
+                            - var ethx = 'eth' + val
+                            if (InterfaceName === ethx)
+                              option(selected='selected')= ethx
+                            else
+                              option= ethx
+                    - deviceCounter = deviceCounter + 1
+
+            // 0 is the first ethernet card
+            if (networkDeviceInformation[0]['$']['ReadOnly'] === 'true')
+              div(id='overlay')
+
+        h3 Usb ports
+        div(class='table-responsive')
+          table(class='table table-hover table-bordered')
+            thead
+              tr(class='vsk-blue text-white')
+                th Product
+                th Vendor
+                th Device Node
+            tbody
+              each deviceType in usbDeviceInformation
+                if (deviceType['$']['Type'] === 'usb')
+                  each device in deviceType['Device']
+                    -var serial = device['$']['device_serial']
+                    if (device['$']['device_serial'].indexOf("Xtralis_I_O_card_") != -1)
+                                       
+                      // we are going to mark the second usb port on the MIO card as hidden
+                      // the pci_endpoint of the first mio usb ends with .0
+                      // the pci_endpoint of the second mio usb ends width .1
+                      - var hideSecondMioUsbPort = ""                      
+                      if (device['$']['pci_endpoint'].slice(-1) == "1")
+                        - hideSecondMioUsbPort = "hidden"
+                                   
+                      tr(class=hideSecondMioUsbPort)
+                        td!= "MIO CARD"
+                        td!= "Xtralis"
+                        td
+                          - var DeviceNode = device['$']['DEVICE_NODE']
+                          input(type="hidden" name=deviceCounter value='Type="Usb"')
+                          input(type="hidden" name=deviceCounter value='pci_root="' + device['$']['pci_root'] + '"')
+                          input(type="hidden" name=deviceCounter value='pci_endpoint="' + device['$']['pci_endpoint'] + '"')
+
+                          if (hideSecondMioUsbPort === "hidden")
+                            - var classesToSet = serial + "-part-2" + " " + "UsbPort"
+                            if (DeviceNode == "ttyU6")
+                              - var valueToSet = "MIO-1-part2"
+                            else if (DeviceNode === "ttyU8")
+                              - var valueToSet = "MIO-2-part2"
+                            else
+                              - var valueToSet = "---"
+                            
+                            input(id=deviceCounter value=valueToSet name=deviceCounter class=classesToSet)                                                                                                            
+                          
+                          if (hideSecondMioUsbPort === "")                                                        
+                            select(autocomplete="off" id=deviceCounter name=deviceCounter class=serial class="UsbPort" onChange="UsbPortChanged(this.id, this.value, \"" + serial +  "\");")
+                              if (DeviceNode === "ttyU5")
+                                option() ---
+                                option(selected='selected') MIO-1
+                                option() MIO-2
+                              else if (DeviceNode === "ttyU7")
+                                option(selected='selected') ---
+                                option() MIO-1
+                                option(selected='selected') MIO-2
+                              else
+                                option(selected='selected') ---
+                                option() MIO-1
+                                option() MIO-2
+                                      
+                      - deviceCounter = deviceCounter + 1
+                    else
+                      tr
+                        td!= device['$']['ID_MODEL_FROM_DATABASE']
+                        td!= device['$']['ID_VENDOR_FROM_DATABASE']
+                        td
+                          - var DeviceNode = device['$']['DEVICE_NODE']
+                          input(type="hidden" name=deviceCounter value='Type="Usb"')
+                          input(type="hidden" name=deviceCounter value='pci_root="' + device['$']['pci_root'] + '"')
+                          input(type="hidden" name=deviceCounter value='pci_endpoint="' + device['$']['pci_endpoint'] + '"')
+                          select(autocomplete="off" id=deviceCounter name=deviceCounter class="UsbPort" onChange="UsbPortChanged(this.id, this.value);")                         
+                            each val in [0, 1, 2, 3, 4, 9, 10, 11, 12, 13, 14, 15]
+                              if (val === 0)
+                                if (DeviceNode === "---")
+                                  option(selected='selected') ---
+                                else
+                                  option ---
+                              else
+                                - var ttyUx = 'ttyU' + val
+                                if (DeviceNode === ttyUx)
+                                  option(selected='selected')= ttyUx
+                                else
+                                  option= ttyUx
+                                    
+                      - deviceCounter = deviceCounter + 1                    
+                  
+        div(class='text-center')
+          button(id='refreshButton' type="button" class="btn btn-default" onClick="window.location.reload()")
+            span(class="glyphicon glyphicon-refresh")
+            span &nbsp;Refresh
+          button(id='applyButton' type="button" class="btn btn-danger" data-toggle="modal" data-target="#areYouSureToApplyModal")
+            span(class="glyphicon glyphicon-download")
+            span &nbsp;Apply Configuration
+
+
+        div(id="areYouSureToApplyModal" class="modal fade" role="dialog")
+          div(class="modal-dialog")
+
+            div(class="modal-content")
+              div(class="modal-header")
+                button(type="button" class="close" data-dismiss="modal") &times
+                h4(class="modal-title") Apply Your Configuration
+
+              div(class="modal-body")
+                p Are you sure to apply your configuration?
+
+              div(class="modal-footer")
+                button(type="button" class="btn btn-default" data-dismiss="modal" onclick="SubmitAndReload();") Apply
+
+        div(id="loadingModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog")
+          div(class="modal-dialog")
+
+            div(class="modal-content")
+              div(class="modal-header")
+                h4(class="modal-title") Waiting to reload new hardware configuration ...
+                p
+                h6(class="network-changes modal-title bg-danger text-uppercase") Making changes to the network cards will break communication.
+                h6(class="network-changes modal-title bg-danger text-uppercase") You will need to plug your network cable in a different network card.
+                h6(class="network-changes modal-title bg-danger text-uppercase") The system will now REBOOT!!!!
+                br
+                h6(class="modal-title bg-info text-uppercase") Info: Changes to MIO cards are only effective after a reboot.
+
+              div(class="modal-body")
+                div(class="progress")
+                  div(id="progressBar" class="progress-bar vsk-blue" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:70%")
+
+
+
+
+  script.
+    function SubmitAndReload() {
+      document.getElementById("hardwareConfigForm").submit();
+      $('#loadingModal').modal('show');
+      Reloading();
+    }
+
+
+
+    function Reloading() {
+        var currentValue = parseInt($('.progress-bar').attr('aria-valuenow'));                      
+
+        if (currentValue == 100) {
+          $.ajax({
+            url: '/createdevicedataxml',
+            type: 'POST',
+            async: false
+          });
+          
+          window.location = "/hardwareconfig"
+        }
+        else {
+          currentValue = currentValue + 1;
+          $('.progress-bar').css('width', currentValue +'%').attr('aria-valuenow', currentValue);
+          window.setTimeout(Reloading, 50);
+        }
+    }
+
+
+    function EthernetAdapterChanged( idOfChangedEthernetAdapter, newValue ) {
+      $('#ethernetCardsConfigured').val("true");
+      $('.network-changes').css("display", "block");
+
+      $( ".EthetnetAdapter" ).each(function(index, object) {
+        if (idOfChangedEthernetAdapter != object.id) {
+          if (object.value === newValue)
+          {
+            object.value = "---"
+          }
+        }
+      });
+    }
+
+
+    function UsbPortChanged( idOfChangedUsbPort, newValue, selectClass ) {
+      $( ".UsbPort" ).each(function(index, object) {
+        if (idOfChangedUsbPort != object.id) {
+          if (object.value === newValue)
+          {
+            object.value = "---"
+          }
+        }
+      });
+      
+           
+      // for MIO cards only ...
+      if (selectClass.indexOf("Xtralis_I_O_card") != -1)
+      {       
+        var hiddenInputClass = "." + selectClass + "-part-2"
+        if (newValue === "---")
+        {
+           $(hiddenInputClass).attr("value", "---");
+        }
+        else if (newValue === "MIO-1")
+        {
+           $(hiddenInputClass).attr("value", "MIO-1-part2");
+        }
+        else if (newValue === "MIO-2")
+        {
+           $(hiddenInputClass).attr("value", "MIO-2-part2");
+        }
+      }
+    }

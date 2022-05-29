@@ -1,0 +1,86 @@
+extends layout
+
+block bodycontent
+
+  body
+
+    div(class="wrapper")
+      div(id="loginForm" class="form-signin")
+        h2(class="form-signin-heading") Please login
+        input(id="loginUserName" type="text" class="form-control" name="userid" placeholder="User Name" required="" autofocus="")
+        input(id="loginPassword" type="password" class="form-control" name="password" placeholder="Password" required="")
+        button(id="loginButton" class="btn btn-lg btn-primary btn-block" onclick="login();") Login
+
+
+
+
+
+  script.
+    function login() {
+      var salt = getCookieValue("ft2-salt");
+
+      var loginUserName = document.getElementById("loginUserName")
+      var loginPassword = document.getElementById("loginPassword")
+
+
+      var form = document.createElement("form")
+      form.method='POST';
+
+      var user = document.createElement("input");
+      user.name = "userid";
+      user.type = "hidden"
+      user.value = Sha256.hash(loginUserName.value + salt)
+
+      var password = document.createElement("input");
+      password.name = "password";
+      password.type = "hidden"
+      password.value = Sha256.hash(loginPassword.value + salt)
+
+      form.appendChild(user);
+      form.appendChild(password);
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    function getCookieValue(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+          if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+      }
+
+      return "";
+    }
+
+    $(document).keyup(function (e) {
+      if ((e.keyCode == 13)) {
+          login();
+      }
+    });
+
+  script(type='text/javascript', src='/javascripts/sha256.js')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

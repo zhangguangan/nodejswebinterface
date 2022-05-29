@@ -1,0 +1,36 @@
+extends layout
+
+block navbar
+  body
+    nav(class="navbar navbar-default navbar-static-top")
+      div(class="container-fluid")
+        div(class="navbar-header")
+          button(type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false")
+            span(class="sr-only") Toggle navigation
+            span(class="icon-bar")
+            span(class="icon-bar")
+            span(class="icon-bar")
+
+          a(class="navbar-brand" href="/hardwareconfig")
+            img(style="max-width:100px;" src="/images/xtralis_logo_header_new.png")
+
+        div(class="collapse navbar-collapse" id="bs-example-navbar-collapse-1")
+          ul(class="nav navbar-nav")
+            li(class=(title == 'Heracles Xoa | Hardware Configuration' ? 'active' : ''))
+              a(href="/hardwareconfig") Hardware Configuration
+                span(class="sr-only") current
+            li(class=(title == 'Heracles Xoa | Audio Settings' ? 'active' : ''))
+              a(href="/audiosettings") Audio Settings
+                span(class="sr-only") current
+            li(class=(title == 'Heracles Xoa | Reset configuration' ? 'active' : ''))
+              a(href="/resetconfiguration") Reset configuration
+                span(class="sr-only") currenT
+            li(class=(title == 'Heracles Xoa | Format HDD' ? 'active' : ''))
+              a(href="/formatHDD") Format HDD
+                span(class="sr-only") current
+          ul(class="nav navbar-nav navbar-right")
+            li
+              a(href="/logout") Logout
+
+  script.
+    $(".nav a").on("click", function(){ $(".nav").find(".active").removeClass("active"); $(this).parent().addClass("active"); });

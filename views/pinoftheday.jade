@@ -1,0 +1,74 @@
+extends layout
+
+block bodycontent
+
+  body
+
+    div(class="wrapper")
+      div(id="loginForm" class="form-signin")
+        h2(class="form-signin-heading") Pin of the day
+        input(id="loginPinOfTheDay" type="text" class="form-control" name="pinOfTheDay" placeholder="Pin Of The Day" required="" autofocus="")
+        br
+        button(id="pinOfTheDayButton" class="btn btn-lg btn-primary btn-block" onclick="login();") Enter
+
+
+
+  script.
+    function login() {
+      var salt = getCookieValue("ft2-salt");
+
+      var loginPinOfTheDay = document.getElementById("loginPinOfTheDay")
+
+      var form = document.createElement("form")
+      form.method='POST';
+
+      var pinOfTheDay = document.createElement("input");
+      pinOfTheDay.name = "pinOfTheDay";
+      pinOfTheDay.type = "hidden"
+      pinOfTheDay.value = Sha256.hash(loginPinOfTheDay.value + salt)
+
+      form.appendChild(pinOfTheDay);
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    function getCookieValue(cname) {
+      var name = cname + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+          if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+      }
+
+      return "";
+    }
+
+    $(document).keyup(function (e) {
+      if ((e.keyCode == 13)) {
+          login();
+      }
+    });
+
+  script(type='text/javascript', src='/javascripts/sha256.js')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

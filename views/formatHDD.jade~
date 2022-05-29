@@ -1,0 +1,135 @@
+extends navbar
+
+block bodycontent
+
+  body
+  
+  div(id="formatHDD")
+      
+    h2(class='text-center') Harddisks configuration
+    br
+
+    h3 Disk formatting
+
+    div(id='disks')
+      table(class='table table-hover table-bordered')
+        thead
+          tr(class='vsk-blue text-white')
+            th Name
+            th Type
+            th Size
+            th Mountpoint
+            th Select to format
+            
+            each diskItem in diskList
+              tr
+                td(class='boldCell')!= diskItem['$']['name']
+                td!= diskItem['$']['type']
+                td!= diskItem['$']['size']
+                td!= diskItem['$']['mountpoint']
+                td
+                if (diskItem['part'])
+                  each partionItem in diskItem['part']
+                    tr
+                      - var partitionName = partionItem['$']['name']
+                      - var isDOM = partionItem['$']['isDOM']
+                      //overrule table style
+                      if (isDOM == 0)
+                        td(style = 'padding-left:25px;')!= partitionName
+                      else
+                        td(style = 'padding-left:25px;')!= partitionName + ' (DOM)'
+                      td!= partionItem['$']['type']
+                      td!= partionItem['$']['size']
+                      td!= partionItem['$']['mountpoint']
+                        if (isDOM == 0)
+                          td(style='background-color:azure; text-align:center;')
+                            input(id=partitionName type='radio' name='select' class="partitionRadioButton")
+                        else
+                          td
+                      if (partionItem['raid'])
+                        each raidItem in partionItem['raid']
+                          tr
+                            //overrule table style
+                            td(style = 'padding-left:50px;')!= raidItem['$']['name']
+                            td!= raidItem['$']['type']
+                            td!= raidItem['$']['size']
+                            td!= raidItem['$']['mountpoint']  
+                            td
+                            if (raidItem['md'])
+                              each mdItem in raidItem['md']
+                                tr
+                                  //overrule table style
+                                  td(style = 'padding-left:75px;')!= mdItem['$']['name']
+                                  td!= mdItem['$']['type']
+                                  td!= mdItem['$']['size']
+                                  td!= mdItem['$']['mountpoint']  
+                                  td
+
+    div(class='text-center')
+      button(id='applyButton' type="button" class="btn btn-danger" data-toggle="modal" data-target="#areYouSureToApplyModal")
+        span(class="glyphicon glyphicon-download")
+        span &nbsp;Apply Selection
+
+    div(id="areYouSureToApplyModal" class="modal fade" role="dialog")
+      div(class="modal-dialog")
+
+        div(class="modal-content")
+          div(class="modal-header")
+            button(type="button" class="close" data-dismiss="modal") &times
+            h4(class="modal-title") Apply Your Selection
+
+          div(class="modal-body")
+            p Are you sure to apply your selection?
+            span(id="mySelection" style='color:blue;font-weight:bold;')
+
+          div(class="modal-footer")
+            button(type="button" class="btn btn-default" data-dismiss="modal" onclick="StartFormatting();") Apply
+                      
+  script.
+
+    function ReadSelectedPartition()
+    {
+      $(".partitionRadioButton").each(function(index, object) {
+
+        var x = document.getElementById(object.id);
+
+        if(x.checked)
+        {
+          document.getElementById("mySelection").innerHTML = x.id;
+        }
+      });
+    }
+    
+    function StartFormatting()
+    {
+      var selectedPartition = {};
+
+      selectedPartition['part'] = '---'
+
+      $(".partitionRadioButton").each(function(index, object) {
+
+        var x = document.getElementById(object.id);
+
+        if(x.checked)
+        {
+          selectedPartition['part'] = x.id;
+        }
+      });
+
+      $.ajax({
+        type: "POST",
+        data: selectedPartition,
+        url: "/formatHDD",
+        success: function(msg){
+        $('.answer').html(msg);
+        }
+      });
+    }
+
+    $(document).ready(function(){
+      $("#applyButton").click(function(){
+          ReadSelectedPartition();
+      });
+    });
+
+      

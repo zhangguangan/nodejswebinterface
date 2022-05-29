@@ -1,0 +1,211 @@
+body {
+  width: 100%;
+  margin: 0 auto;
+  /*background-color: #C9CACE;*/
+  background: #EFEFEF !important;
+}
+
+.vsk-blue {
+  /*background-color: #016bb5;*/
+  background-color: #336699;
+}
+
+.text-white {
+  color: white;
+}
+
+#applyButton, #refreshButton {
+  margin: 20px;
+}
+
+
+.wrapper {
+	margin-top: 80px;
+  margin-bottom: 80px;
+}
+
+.form-signin {
+  max-width: 380px;
+  padding: 15px 35px 45px;
+  margin: 0 auto;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.1);
+
+  .form-signin-heading,
+	.checkbox {
+	  margin-bottom: 30px;
+	}
+
+
+	.form-control {
+	  position: relative;
+	  font-size: 16px;
+	  height: auto;
+	  padding: 10px;
+    @include box-sizing(border-box);
+  
+		&:focus {
+		  z-index: 2;
+		}
+  }
+
+	input[type="text"] {
+	  margin-bottom: -1px;
+	  border-bottom-left-radius: 0;
+	  border-bottom-right-radius: 0;
+	}
+
+	input[type="password"] {
+	  margin-bottom: 20px;
+	  border-top-left-radius: 0;
+	  border-top-right-radius: 0;
+	}
+}
+
+
+#loginUserName {
+  margin-top: 10px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+#loginPassword {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+#loginButton {
+  margin-top: 20px;
+}
+
+#logoutButton {
+  font-size: 32px;
+  float:right;
+  color: #333;
+}
+
+#hardwareconfig, #audioSettings, #formatHDD {
+  padding-right: 40px;
+  padding-left: 40px;
+}
+
+#hardwareconfig {
+  margin-top: 10px;
+}
+
+#front, #pcm, #master, #headphone, #speaker {
+  font-family: "Helvetica Neue";
+  font-size: 14px;
+  padding-top: 35px;
+}
+
+#slider1-enabled, #slider2-enabled, #slider3-enabled, #slider4-enabled, #slider5-enabled {
+  margin-top: 35px;
+}
+
+
+.audioRow {
+  height: 75px;
+}
+
+.slider {
+  margin-left: 20px;
+  margin-top: 30px
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#ethernetCards{
+  position:relative;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+#overlay{
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  position: absolute;
+  background-color: rgba(204, 204, 204, 0.5);;
+  top: 0;
+  left: 0;
+}
+
+#ethernetCards > table {
+  margin-bottom: 0px;
+}
+
+.network-changes {
+  display: none;
+}
+
+/* Navbar Styling */
+
+.navbar-default {
+background-color: #336699;
+border-color: #191919;
+}
+.navbar-default .navbar-brand {
+color: #ffffff;
+}
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
+color: #fff;
+}
+.navbar-default .navbar-text {
+color: #ffffff;
+}
+.navbar-default .navbar-nav > li > a {
+color: #ffffff;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+color: #fff;
+}
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
+color: #fff;
+background-color: #252A2F;
+}
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
+color: #fff;
+background-color: #252A2F;
+}
+.navbar-default .navbar-toggle {
+border-color: #191919;
+}
+.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
+background-color: #252A2F;
+}
+.navbar-default .navbar-toggle .icon-bar {
+background-color: #ffffff;
+}
+.navbar-default .navbar-collapse,.navbar-default .navbar-form {
+border-color: #ffffff;
+}
+.navbar-default .navbar-link {
+color: #ffffff;
+}
+.navbar-default .navbar-link:hover {
+color: #fff;
+}
+.boldCell {
+  font-weight: bold;
+}
+
+@media (max-width: 767px) {
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a {
+		color: #ffffff;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+		color: #fff;
+	}
+	.navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+	color: #fff;
+	background-color: #252A2F;
+	}
+}

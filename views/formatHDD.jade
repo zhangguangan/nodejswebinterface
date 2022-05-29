@@ -1,0 +1,105 @@
+extends navbar
+
+block bodycontent
+
+  body
+  
+  div(id="formatHDD")
+    
+    h2(class='text-center') Harddisks configuration
+    br
+
+    h3 Recording disks
+
+    div(id='disks')
+
+      //show harddisks configuration
+      table(class='table table-hover table-bordered')
+        thead
+          tr(class='vsk-blue text-white')
+            th Name
+            th Type
+            th Size
+            th Mountpoint
+            th Label
+            th Free inodes
+
+            each diskItem in diskList
+              - var isDOM = diskItem['$']['isDOM']
+              - var backgroundcolor = diskItem['$']['backgroundColor']
+              if (isDOM == false)
+                //- console.log("disk:" + diskItem['$']['name'])
+                //overrule table style
+                tr(style='background-color:#{backgroundcolor};')
+                  td(class='boldCell')!= diskItem['$']['name']
+                  td!= diskItem['$']['type']
+                  td!= diskItem['$']['size']
+                  td!= diskItem['$']['mountpoint']
+                  td!= diskItem['$']['label']
+                  td!= diskItem['$']['freeINodes']
+                  if (diskItem['part'])
+                    each partitionItem in diskItem['part']
+                      tr(style='background-color:#{backgroundcolor};')
+                        td(style = 'padding-left:25px;')!= partitionItem['$']['name']
+                        td!= partitionItem['$']['type']
+                        td!= partitionItem['$']['size']
+                        td!= partitionItem['$']['mountpoint']
+                        td!= partitionItem['$']['label']
+                        td!= partitionItem['$']['freeINodes']
+                        if (partitionItem['raid'])
+                          each raidItem in partitionItem['raid']
+                            tr(style='background-color:#{backgroundcolor};')
+                              td(style = 'padding-left:50px;')!= raidItem['$']['name']
+                              td!= raidItem['$']['type']
+                              td!= raidItem['$']['size']
+                              td!= raidItem['$']['mountpoint']
+                              td!= raidItem['$']['label']
+                              td!= raidItem['$']['freeINodes']
+                              if (raidItem['md'])
+                                each mdItem in raidItem['md']
+                                  tr(style='background-color:#{backgroundcolor};')
+                                    td(style = 'padding-left:75px;')!= mdItem['$']['name']
+                                    td!= mdItem['$']['type']
+                                    td!= mdItem['$']['size']
+                                    td!= mdItem['$']['mountpoint']
+                                    td!= mdItem['$']['label']
+                                    td!= mdItem['$']['freeINodes']
+
+    div(class='text-center')
+      button(id='applyButton' type="button" class="btn btn-danger" data-toggle="modal" data-target="#areYouSureToApplyModal")
+        span(class="glyphicon glyphicon-download")
+        span &nbsp;Format all recording disks
+
+    div(id="areYouSureToApplyModal" class="modal fade" role="dialog")
+      div(class="modal-dialog")
+
+        div(class="modal-content")
+          div(class="modal-header")
+            button(type="button" class="close" data-dismiss="modal") &times
+            h4(class="modal-title") ****** FORMAT ALL RECORDING DISKS ******
+
+          div(class="modal-body")
+            p The system will be rebooted! Do you want to proceed ?
+            
+          div(class="modal-footer")
+            button(type="button" class="btn btn-default" data-dismiss="modal" onclick="StartFormatting();") YES
+            button(type="button" class="btn btn-default" data-dismiss="modal") NO
+                      
+  script.
+    function StartFormatting()
+    {
+      var formatCommand = {};
+
+      formatCommand['launch'] = 'ok';
+
+      $.ajax({
+        type: "POST",
+        data: formatCommand,
+        url: "/formatHDD",
+        success: function(msg){
+        $('.answer').html(msg);
+        }
+      });
+    }
+
+      

@@ -1,0 +1,46 @@
+extends navbar
+
+block bodycontent
+
+  body
+
+    div(class="alert alert-danger text-center")
+      h4 Warning       
+      p Resetting the configuration to default will remove all previously configured mappings.
+      p The device will behave as it was just leaving the factory.
+      p The device will restart after pressing the Reset button.      
+
+    div(id="resetConfiguration")
+      h2(class='text-center') Reset configuration
+    
+    
+    div(class='text-center')
+      button(id='applyButton' type="button" class="btn btn-danger" data-toggle="modal" data-target="#areYouSureToApplyModal")
+        span(class="glyphicon glyphicon-download")
+        span &nbsp;Reset
+
+
+    div(id="areYouSureToApplyModal" class="modal fade" role="dialog")
+      div(class="modal-dialog")
+
+        div(class="modal-content")
+          div(class="modal-header")
+            button(type="button" class="close" data-dismiss="modal") &times
+            h4(class="modal-title") Reset configuration
+
+          div(class="modal-body")
+            p Are you sure to reset your configuration?
+
+          div(class="modal-footer")
+            button(type="button" class="btn btn-default" data-dismiss="modal" onclick="ResetConfiguration();") Apply
+            
+            
+  script.
+    function ResetConfiguration() {    
+      jQuery.ajax({
+        url: "/deleteallcustomudevrules",
+        type: 'POST'
+      });    
+    }                
+    
+   
